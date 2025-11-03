@@ -49,3 +49,7 @@ sudo docker run -p 8081:8081 \
 -e SPRING_PROFILES_ACTIVE=dev \
 pdf-processor
 ```
+
+
+## License
+This project is licensed under the MIT License © 2025 [Ionut Lupu].
