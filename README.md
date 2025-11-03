@@ -8,7 +8,8 @@ Tech stack: java 21, maven, zxing, apache pdfbox, qpdf.
 
 Maven documentation https://maven.apache.org/guides/index.html
 
-The app requires having qpdf in the system path. Qpdf is packaged inside the dockerfile of the project.
+The app requires having qpdf in the system path. Qpdf is packaged inside the dockerfile of the project. 
+Temporary folders are created inside the system tmp folder where the input files are downloaded. The folders get deleted after each operation is completed.
 
 ## 📄 Endpoints
 
@@ -22,13 +23,13 @@ Splits a PDF file according to the specified parameters.
 
 | Field                  | Type   | Required | Description                                                                 |
 |------------------------|--------|-----------|-----------------------------------------------------------------------------|
-| `file`                 | binary | Yes      | PDF file to split                                                  |
-| `splitType`            | string | Yes      | Accepted values: `PAGES_PER_FILE`, `TOTAL_FILES`, `PAGE_RANGES`, `FILE_SIZE`, `BOOKMARK`, `CODE` |
+| `file`                 | binary | Yes      | Input PDF file                                                  |
+| `splitType`            | enum   | Yes      | Accepted values: `PAGES_PER_FILE`, `TOTAL_FILES`, `PAGE_RANGES`, `FILE_SIZE`, `BOOKMARK`, `CODE` |
 | `options`              | string | No       | Additional split options depending on `splitType`                            |
 
 #### Response
 
-- **200 OK**: Returns a `StreamingResponseBody` (binary PDF chunks).
+- **200 OK**: Returns a `StreamingResponseBody` with a zip file containing the resulting pdf files.
 
 ### Split Options
 
@@ -55,7 +56,8 @@ The following split options are available for the PDF processing API:
 - **Example**: `PAGE_RANGES="1-5,7-10"`
 
 #### FILE_SIZE_BYTES
-- **Description**: Split the PDF into files, each not exceeding a specified size in bytes. Minimum document size is 1 page. In case the size limit provided is too small, the API will respond with the size in bytes of the part number it failed at - that part will be a single page that doesn't fit within the limit.
+- **Description**: Split the PDF into files, each not exceeding a specified size in bytes. Minimum document size is 1 page. In case the size limit provided is too small, 
+the API will respond with the size in bytes of the part number it failed at - that part will be a single page that doesn't fit within the limit.
 - **Usage**: Provide the maximum size in bytes as an integer.
 - **Example**: `FILE_SIZE_BYTES=1000000`
 
@@ -78,6 +80,21 @@ Merges multiple PDF files into a single PDF.
 
 - **200 OK**: Returns a `StreamingResponseBody` (merged PDF file).
 
+
+### Extract content
+
+#### Request body schema. Type: Multipart Form
+| Field         | Type   | Required | Description                                                          |
+|---------------|--------|----------|----------------------------------------------------------------------|
+| `file`        | binary | Yes      | Input PDF file                                                       |
+| `options`     | string | Yes      | Content extraction options                                           |
+| `contentType` | enum   | no       | Accepted values: TEXT, IMAGE, METADATA, TABLE, FORM, ANNOTATION, OCR |
+
+#### Text extraction
+- **Description**: Extracts the text from each page. Each page outputs an individual .txt file.
+
+#### Image extraction
+- **Description**: Extracts the images from the whole document into individual jpg files.
 
 ## Useful commands
 
