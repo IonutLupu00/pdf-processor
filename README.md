@@ -4,24 +4,80 @@ This is a spring boot project that exposes several REST endpoints for pdf proces
 Its features are still in progress. 
 Currently supporting merge, split and several types of content extraction.
 
-It uses maven as the project build framework. 
+Tech stack: java 21, maven, zxing, apache pdfbox, qpdf.
+
 Maven documentation https://maven.apache.org/guides/index.html
 
-The app requires to have qpdf in the system path. Qpdf is packaged inside the dockerfile of the project.
+The app requires having qpdf in the system path. Qpdf is packaged inside the dockerfile of the project.
 
-## Supported operations
+## 📄 Endpoints
 
-Some operations support passing the request attribute 'options', which is usually required and directs the behavior, for example which pages ranges to split by.
+## Split PDF
 
-### Split
+**POST** `/pdf/split`
 
-All pdf split services use PdfSplitter. Pdf splitter splits by page ranges using qpdf. Every split type does its unique calculations to compute the page ranges which are passed to PdfSplitter.
+Splits a PDF file according to the specified parameters.
 
-### Merge
+#### Request body schema. Type: Multipart Form
 
-Single merge service, which uses PdfMerger. Pdf merger uses qpdf to merge pdfs. It merges the pdfs in the order they are passed to it.
+| Field                  | Type   | Required | Description                                                                 |
+|------------------------|--------|-----------|-----------------------------------------------------------------------------|
+| `file`                 | binary | Yes      | PDF file to split                                                  |
+| `splitType`            | string | Yes      | Accepted values: `PAGES_PER_FILE`, `TOTAL_FILES`, `PAGE_RANGES`, `FILE_SIZE`, `BOOKMARK`, `CODE` |
+| `options`              | string | No       | Additional split options depending on `splitType`                            |
 
-### Content extraction
+#### Response
+
+- **200 OK**: Returns a `StreamingResponseBody` (binary PDF chunks).
+
+### Split Options
+
+The following split options are available for the PDF processing API:
+
+#### PAGES_PER_FILE
+- **Description**: Splits the PDF into multiple files, each containing a specified number of pages.
+- **Usage**: `PAGES_PER_FILE=5`
+- **Example**: To split a PDF into files with 5 pages each, use the option `PAGES_PER_FILE=5`.
+
+#### TOTAL_FILES
+- **Description**: Splits the PDF into a specified total number of files.
+- **Usage**: `TOTAL_FILES=3`
+- **Example**: To split a PDF into 3 files, use the option `TOTAL_FILES=3`.
+
+#### BOOKMARK_TITLES
+- **Description**: Splits the PDF at the specified bookmark titles.
+- **Usage**: `BOOKMARK_TITLES=Chapter1;Chapter2`
+- **Example**: To split a PDF at the bookmarks titled "Chapter1" and "Chapter2", use the option `BOOKMARK_TITLES=Chapter1;Chapter2`.
+
+#### PAGE_RANGES
+- **Description**: Split the PDF based on specified page ranges.
+- **Usage**: Provide the page ranges in a format like `start-end`.
+- **Example**: `PAGE_RANGES="1-5,7-10"`
+
+#### FILE_SIZE_BYTES
+- **Description**: Split the PDF into files, each not exceeding a specified size in bytes. Minimum document size is 1 page. In case the size limit provided is too small, the API will respond with the size in bytes of the part number it failed at - that part will be a single page that doesn't fit within the limit.
+- **Usage**: Provide the maximum size in bytes as an integer.
+- **Example**: `FILE_SIZE_BYTES=1000000`
+
+---
+
+### Merge PDF
+
+**POST** `/pdf/merge`
+
+Merges multiple PDF files into a single PDF.
+
+
+#### Request body schema. Type: Multipart Form
+| Field   | Type             | Required | Description                           |
+|---------|-----------------|----------|---------------------------------------|
+| `files` | array of binary  | Yes      | List of PDF files to merge (binary)   |
+
+
+#### Response
+
+- **200 OK**: Returns a `StreamingResponseBody` (merged PDF file).
+
 
 ## Useful commands
 
