@@ -1,6 +1,8 @@
 # Pdf-processor documentation
 
-This is a spring boot project that exposes several REST endpoints for pdf processing. It uses qpdf and apache pdfbox for pdf operations.
+This app is a self hostable solution for those in need of a rest server that processes PDFs.
+
+The project uses qpdf and apache pdfbox for pdf operations.
 Its features are still in progress. 
 Currently supporting merge, split and several types of content extraction.
 
