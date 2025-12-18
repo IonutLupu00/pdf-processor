@@ -22,7 +22,7 @@ class TextExtractServiceTest {
     void testExtractTextFromPdf() throws Exception {
         String fileName = "basic-text-cleaned.pdf";
         MultipartFile pdfWithText = getPdfFromResources(fileName, fileName);
-        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithText, "", PdfExtractContentType.TEXT);
+        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithText, "", PdfContentExtractType.TEXT);
 
         StreamingResponseBody result = pdfTextExtractService.processRequest(request);
 

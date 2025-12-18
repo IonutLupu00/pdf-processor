@@ -14,5 +14,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class PdfContentExtractRequest implements PdfRequest {
     private MultipartFile file;
     private String options;
-    private PdfExtractContentType contentType;
+    private PdfContentExtractType contentType;
 }

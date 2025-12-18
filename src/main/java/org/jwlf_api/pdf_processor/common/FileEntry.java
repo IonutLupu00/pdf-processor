@@ -1,4 +1,4 @@
-package org.jwlf_api.pdf_processor.content_extraction;
+package org.jwlf_api.pdf_processor.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -16,7 +16,7 @@ public class PdfContentExtractServiceFactory {
     }
 
     public PdfContentExtractService resolveService(PdfContentExtractRequest request) throws PdfContentExtractException {
-        PdfExtractContentType contentType = request.getContentType();
+        PdfContentExtractType contentType = request.getContentType();
         if (contentType == null) {
             throw new PdfContentExtractException("Missing content type.");
         }

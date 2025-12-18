@@ -21,7 +21,7 @@ class PdfSplitServiceFileSizeTest {
     @Test
     void testSplit_validFileSplitting() throws PdfException, IOException {
         int originalPages = 5;
-        long fileSizeLimit = 800L;
+        long fileSizeLimit = 850L;
         MultipartFile file = TestDataGenerator.generateMockPdfFilesWithPages(1, originalPages).get(0);
         String options = "%s=%s".formatted(SplitOption.FILE_SIZE_BYTES, fileSizeLimit);
         SplitRequest request = new SplitRequest(file, SplitType.FILE_SIZE, options);
@@ -29,7 +29,10 @@ class PdfSplitServiceFileSizeTest {
         Map<String, PdfAssertDetails> expectedFilesAndPages = Map.of(
                 "part_1.pdf", new PdfAssertDetails(1, fileSizeLimit, null),
                 "part_2.pdf", new PdfAssertDetails(1, fileSizeLimit, null),
-                "part_3.pdf", new PdfAssertDetails(1, fileSizeLimit, null));
+                "part_3.pdf", new PdfAssertDetails(1, fileSizeLimit, null),
+                "part_4.pdf", new PdfAssertDetails(1, fileSizeLimit, null),
+                "part_5.pdf", new PdfAssertDetails(1, fileSizeLimit, null)
+        );
 
         assertZipContentWithPdfs(result, expectedFilesAndPages);
     }

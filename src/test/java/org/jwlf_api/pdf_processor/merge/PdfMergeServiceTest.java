@@ -1,6 +1,5 @@
 package org.jwlf_api.pdf_processor.merge;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -18,7 +17,6 @@ import static org.jwlf_api.pdf_processor.TestDataGenerator.generateMockPdfFiles;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Disabled
 class PdfMergeServiceTest {
 
     private final PdfMergeService pdfMergeService = new PdfMergeService();

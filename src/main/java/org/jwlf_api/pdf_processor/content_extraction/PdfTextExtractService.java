@@ -6,8 +6,9 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jwlf_api.pdf_processor.common.FileEntry;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
-import org.jwlf_api.pdf_processor.common.Util;
+import org.jwlf_api.pdf_processor.common.StreamUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -32,7 +33,7 @@ public class PdfTextExtractService extends PdfContentExtractService {
             log.debug("Extracted text from PDF: {}", file.getOriginalFilename());
             FileEntry textFile = new FileEntry(Objects.requireNonNull(file.getOriginalFilename()).replaceAll("\\.pdf$", ".txt"), text.getBytes(StandardCharsets.UTF_8));
             List<FileEntry> files = Collections.singletonList(textFile);
-            return Util.createZipFromFiles(files);
+            return StreamUtil.createZipStreamFromFiles(files);
         } catch (IOException e) {
             throw new PdfContentExtractException("Error extracting text from PDF", e);
         }

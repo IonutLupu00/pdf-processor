@@ -14,7 +14,7 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.jwlf_api.pdf_processor.common.Util;
+import org.jwlf_api.pdf_processor.common.StreamUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -38,7 +38,7 @@ public class PdfSplitServiceCode extends PdfSplitService {
     protected StreamingResponseBody splitPdf(SplitRequest request) throws PdfSplitException {
         try (RandomAccessRead rar = new RandomAccessReadBuffer(request.getFile().getInputStream()); PDDocument document = Loader.loadPDF(rar)) {
             List<Path> documents = splitDocument(document);
-            return Util.createZipFromFilePaths(documents);
+            return StreamUtil.createZipStreamFromFilePaths(documents);
         } catch (IOException e) {
             throw new PdfSplitException("Failed to split PDF by code.", e);
         }

@@ -10,7 +10,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-boot.version>3.5.5</spring-boot.version>
-        <pdfbox.version>3.0.3</pdfbox.version>
+        <pdfbox.version>3.0.6</pdfbox.version>
         <lombok.version>1.18.38</lombok.version>
         <mockito.version>5.17.0</mockito.version>
         <spring.version>6.2.10</spring.version>

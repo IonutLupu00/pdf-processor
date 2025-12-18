@@ -11,8 +11,9 @@ import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.jwlf_api.pdf_processor.common.FileEntry;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
-import org.jwlf_api.pdf_processor.common.Util;
+import org.jwlf_api.pdf_processor.common.StreamUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -43,7 +44,7 @@ public class PdfImageExtractService extends PdfContentExtractService {
                 pdfImages.addAll(imagesFromPage);
             }
             log.debug("Finished processing document {}.", file.getName());
-            return Util.createZipFromFiles(pdfImages);
+            return StreamUtil.createZipStreamFromFiles(pdfImages);
         } catch (IOException e) {
             throw new PdfContentExtractException("Error extracting images from PDF", e);
         }

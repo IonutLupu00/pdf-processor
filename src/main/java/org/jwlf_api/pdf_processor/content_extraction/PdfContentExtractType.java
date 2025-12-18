@@ -1,6 +1,6 @@
 package org.jwlf_api.pdf_processor.content_extraction;
 
-public enum PdfExtractContentType {
+public enum PdfContentExtractType {
     TEXT,
     METADATA,
     IMAGE,

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @AllArgsConstructor
 public class PdfContentExtractController {
 
-    PdfContentExtractServiceFactory pdfContentExtractServiceFactory;
+    private final PdfContentExtractServiceFactory pdfContentExtractServiceFactory;
 
     @PostMapping
     public ResponseEntity<StreamingResponseBody> execute(@ModelAttribute PdfContentExtractRequest request) throws PdfContentExtractException {

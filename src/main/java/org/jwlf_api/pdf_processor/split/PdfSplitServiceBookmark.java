@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocume
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.jwlf_api.pdf_processor.common.PdfException;
+import org.jwlf_api.pdf_processor.common.PdfOptionsParser;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -26,7 +27,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.jwlf_api.pdf_processor.common.Util.createZipFromFilePaths;
+import static org.jwlf_api.pdf_processor.common.StreamUtil.createZipStreamFromFilePaths;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.PageRange;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.splitByPageRanges;
 
@@ -41,10 +42,10 @@ public class PdfSplitServiceBookmark extends PdfSplitService {
     @Override
     public StreamingResponseBody splitPdf(SplitRequest request) throws PdfException {
         try (RandomAccessRead rar = new RandomAccessReadBuffer(request.getFile().getInputStream()); PDDocument document = Loader.loadPDF(rar)) {
-            Map<SplitOption, String> options = parseOptions(request.getOptions());
+            Map<SplitOption, String> options = PdfOptionsParser.parseOptions(request.getOptions());
             List<String> bookmarks = CollectionUtils.isEmpty(options) ? null : parseBookmarks(options.get(SplitOption.BOOKMARK_TITLES));
             List<Path> documents = splitDocuments(document, bookmarks);
-            return createZipFromFilePaths(documents);
+            return createZipStreamFromFilePaths(documents);
         } catch (IOException e) {
             throw new PdfSplitException("Failed to load PDF document.", e);
         }

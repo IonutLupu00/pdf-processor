@@ -6,6 +6,7 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jwlf_api.pdf_processor.common.PdfException;
+import org.jwlf_api.pdf_processor.common.PdfOptionsParser;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jwlf_api.pdf_processor.common.Util.createZipFromFilePaths;
+import static org.jwlf_api.pdf_processor.common.StreamUtil.createZipStreamFromFilePaths;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.splitByPageIndexesLeftLimit;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class PdfSplitServicePagesPerFile extends PdfSplitService {
     @Override
     protected StreamingResponseBody splitPdf(SplitRequest request) throws PdfException {
         try (RandomAccessRead rar = new RandomAccessReadBuffer(request.getFile().getInputStream()); PDDocument document = Loader.loadPDF(rar)) {
-            Map<SplitOption, String> options = parseOptions(request.getOptions());
+            Map<SplitOption, String> options = PdfOptionsParser.parseOptions(request.getOptions());
             int pagesPerFile = Integer.parseInt(options.get(SplitOption.PAGES_PER_FILE));
             if (pagesPerFile > document.getNumberOfPages()) {
                 throw new PdfSplitException("Pages per file must be less than or equal to the number of pages in the document.");
@@ -39,7 +40,7 @@ public class PdfSplitServicePagesPerFile extends PdfSplitService {
             }
 
             List<Path> documents = splitByPageIndexesLeftLimit(document, indexes);
-            return createZipFromFilePaths(documents);
+            return createZipStreamFromFilePaths(documents);
         } catch (IOException e) {
             throw new PdfSplitException("Failed to load PDF document.", e);
         }
@@ -51,7 +52,7 @@ public class PdfSplitServicePagesPerFile extends PdfSplitService {
         SplitRequest splitRequest;
         splitRequest = (SplitRequest) request;
 
-        Map<SplitOption, String> requestOptions = parseOptions(splitRequest.getOptions());
+        Map<SplitOption, String> requestOptions = PdfOptionsParser.parseOptions(splitRequest.getOptions());
         int pagesPerFile = Integer.parseInt(requestOptions.get(SplitOption.PAGES_PER_FILE));
         log.debug("Pages per file: {}", pagesPerFile);
 
