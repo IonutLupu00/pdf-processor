@@ -1,4 +1,4 @@
-package org.jwlf_api.pdf_processor.common;
+package org.jwlf_api.pdf_processor.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -33,8 +33,7 @@ public abstract class PdfContentExtractService extends PdfService {
         PdfContentExtractRequest pdfContentExtractRequest;
         pdfContentExtractRequest = (PdfContentExtractRequest) request;
 
-        MultipartFile file = pdfContentExtractRequest.getFile();
-        if (file == null) {
+        if (pdfContentExtractRequest.getFile() == null) {
             throw new PdfContentExtractException("File is required");
         }
     }

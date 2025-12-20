@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jwlf_api.pdf_processor.common.StreamUtil.createZipStreamFromFilePaths;
+import static org.jwlf_api.pdf_processor.common.util.StreamUtil.createZipStreamFromFilePaths;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.splitByPageIndexesLeftLimit;
 
 @Slf4j

@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.jwlf_api.pdf_processor.common.StreamUtil.createZipStreamFromFilePaths;
+import static org.jwlf_api.pdf_processor.common.util.StreamUtil.createZipStreamFromFilePaths;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.PageRange;
 import static org.jwlf_api.pdf_processor.split.PdfSplitter.splitByPageRanges;
 

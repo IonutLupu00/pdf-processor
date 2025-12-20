@@ -1,5 +1,6 @@
-package org.jwlf_api.pdf_processor.common;
+package org.jwlf_api.pdf_processor.common.util;
 
+import org.jwlf_api.pdf_processor.common.FileEntry;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 

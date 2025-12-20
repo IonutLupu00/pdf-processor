@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jwlf_api.pdf_processor.common.PdfException;
 import org.jwlf_api.pdf_processor.common.PdfOptionsParser;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
-import org.jwlf_api.pdf_processor.common.StreamUtil;
+import org.jwlf_api.pdf_processor.common.util.StreamUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
