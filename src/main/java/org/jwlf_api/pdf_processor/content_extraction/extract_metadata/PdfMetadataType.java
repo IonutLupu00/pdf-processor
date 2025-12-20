@@ -2,7 +2,7 @@ package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 
 import lombok.Getter;
 
-public enum MetadataType {
+public enum PdfMetadataType {
     DOCUMENT_INFO("document-info"),
     XMP_CORE("xmp-core"),
     XMP_COMPLIANCE("xmp-compliance"),
@@ -16,7 +16,7 @@ public enum MetadataType {
     @Getter
     private final String value;
 
-    MetadataType(String value) {
+    PdfMetadataType(String value) {
         this.value = value;
     }
 }

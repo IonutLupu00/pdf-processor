@@ -1,6 +1,6 @@
 package org.jwlf_api.pdf_processor.content_extraction;
 
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.Metadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -11,11 +11,11 @@ public class PdfContentExtractServiceFactory {
 
     private final PdfContentExtractService<StreamingResponseBody> pdfImageExtractService;
     private final PdfContentExtractService<StreamingResponseBody> pdfTextExtractService;
-    private final PdfContentExtractService<Map<String, Metadata>> pdfMetadataExtractService; ;
+    private final PdfContentExtractService<Map<String, PdfMetadata>> pdfMetadataExtractService; ;
 
     public PdfContentExtractServiceFactory(PdfContentExtractService<StreamingResponseBody> pdfImageExtractService,
                                            PdfContentExtractService<StreamingResponseBody> pdfTextExtractService,
-                                           PdfContentExtractService<Map<String, Metadata>> pdfMetadataExtractService) {
+                                           PdfContentExtractService<Map<String, PdfMetadata>> pdfMetadataExtractService) {
         this.pdfImageExtractService = pdfImageExtractService;
         this.pdfTextExtractService = pdfTextExtractService;
         this.pdfMetadataExtractService = pdfMetadataExtractService;

@@ -7,7 +7,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractException;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractService;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.Metadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,32 +16,30 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class PdfMetadataExtractService extends PdfContentExtractService<Map<String, Metadata>> {
+public class PdfMetadataExtractService extends PdfContentExtractService<Map<String, PdfMetadata>> {
 
-    private final MetadataExtractor metadataExtractor;
+    private final PdfMetadataExtractor pdfMetadataExtractor;
 
-    public PdfMetadataExtractService(MetadataExtractor metadataExtractor) {
-        this.metadataExtractor = metadataExtractor;
+    public PdfMetadataExtractService(PdfMetadataExtractor pdfMetadataExtractor) {
+        this.pdfMetadataExtractor = pdfMetadataExtractor;
     }
 
-    protected Map<String, Metadata> extract(PdfRequest request) throws PdfContentExtractException {
+    protected Map<String, PdfMetadata> extract(PdfRequest request) throws PdfContentExtractException {
         PdfMetadataExtractRequest metadataExtractRequest = (PdfMetadataExtractRequest) request;
-        //TODO: centralize reading pdfs from the request.
-        // Only load whole pdfs in memory under a certain size. Save temp on disk above that size.
         try (RandomAccessRead rar = new RandomAccessReadBuffer(metadataExtractRequest.getFile().getInputStream());
              PDDocument document = Loader.loadPDF(rar)) {
-            Set<MetadataType> metadataTypes = metadataExtractRequest.getMetadataTypes().stream()
-                    .map(MetadataType::valueOf).collect(Collectors.toSet());
-            return extractMetadata(metadataTypes, document);
+            Set<PdfMetadataType> pdfMetadataTypes = metadataExtractRequest.getMetadataTypes().stream()
+                    .map(PdfMetadataType::valueOf).collect(Collectors.toSet());
+            return extractMetadata(pdfMetadataTypes, document);
         } catch (IOException e) {
             throw new PdfContentExtractException(e.getMessage(), e);
         }
     }
 
-    private Map<String, Metadata> extractMetadata(Set<MetadataType> metadataTypes, PDDocument document) {
-        return metadataTypes.stream()
+    private Map<String, PdfMetadata> extractMetadata(Set<PdfMetadataType> pdfMetadataTypes, PDDocument document) {
+        return pdfMetadataTypes.stream()
                 .collect(Collectors.toMap(
-                        MetadataType::getValue,
-                        metadataType -> metadataExtractor.extractMetadata(metadataType, document)));
+                        PdfMetadataType::getValue,
+                        pdfMetadataType -> pdfMetadataExtractor.extractMetadata(pdfMetadataType, document)));
     }
 }
