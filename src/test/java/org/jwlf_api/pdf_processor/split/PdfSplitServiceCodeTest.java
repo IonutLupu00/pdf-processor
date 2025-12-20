@@ -15,7 +15,7 @@ import static org.jwlf_api.pdf_processor.TestUtil.getPdfFromResources;
 
 class PdfSplitServiceCodeTest {
 
-    PdfSplitServiceCode pdfSplitService;
+    private PdfSplitServiceCode pdfSplitService;
 
     @BeforeEach
     void setUp() {

@@ -18,13 +18,13 @@ import static org.jwlf_api.pdf_processor.TestDataGenerator.generateMockPdfFilesW
 
 class ImageExtractServiceTest {
 
-    private final PdfContentExtractService imageExtractService = new PdfImageExtractService();
+    private final PdfContentExtractService<StreamingResponseBody> imageExtractService = new PdfImageExtractService();
 
     @Test
     void testExtractImage_success() throws IOException, PdfContentExtractException {
         MultipartFile pdfWithImages = generateMockPdfFilesWithImages(1, 1).getFirst();
         PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithImages, PdfContentExtractType.IMAGE);
-        StreamingResponseBody result = (StreamingResponseBody) imageExtractService.processRequest(request);
+        StreamingResponseBody result = imageExtractService.processRequest(request);
         String expectedFileName = "page_1_image_1.png";
         FileExpectation expectation = getExpectation(expectedFileName, 100, 100);
         Map<String, FileExpectation> expectedFiles = Map.of(expectedFileName, expectation);
