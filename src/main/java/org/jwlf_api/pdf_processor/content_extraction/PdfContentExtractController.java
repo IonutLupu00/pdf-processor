@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/pdf/extract")
@@ -18,11 +20,21 @@ public class PdfContentExtractController {
     private final PdfContentExtractServiceFactory pdfContentExtractServiceFactory;
 
     @PostMapping
-    public ResponseEntity<StreamingResponseBody> execute(@ModelAttribute PdfContentExtractRequest request) throws PdfContentExtractException {
+    public ResponseEntity<?> execute(@ModelAttribute PdfContentExtractRequest request) throws PdfContentExtractException {
         PdfContentExtractService service = pdfContentExtractServiceFactory.resolveService(request);
-        StreamingResponseBody zippedFiles = service.processRequest(request);
-        return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"images.zip\"")
-                .body(zippedFiles);
+        Object serviceResponse = service.processRequest(request);
+        switch (serviceResponse) {
+            case StreamingResponseBody responseBody -> {
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=\"images.zip\"")
+                        .body(responseBody);
+            }
+            case Map responseBody -> {
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=\"images.zip\"")
+                        .body(responseBody);
+            }
+            default -> throw new IllegalArgumentException("Unexpected service return type");
+        }
     }
 }

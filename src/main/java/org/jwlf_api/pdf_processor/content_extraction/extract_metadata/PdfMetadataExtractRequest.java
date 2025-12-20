@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractRequest;
 
-import java.util.List;
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -14,5 +14,5 @@ import java.util.List;
 @Getter
 @Setter
 public class PdfMetadataExtractRequest extends PdfContentExtractRequest {
-    private List<String> include;
+    private Set<String> metadataTypes;
 }

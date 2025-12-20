@@ -22,9 +22,9 @@ class TextExtractServiceTest {
     void testExtractTextFromPdf() throws Exception {
         String fileName = "basic-text-cleaned.pdf";
         MultipartFile pdfWithText = getPdfFromResources(fileName, fileName);
-        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithText, "", PdfContentExtractType.TEXT);
+        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithText, PdfContentExtractType.TEXT);
 
-        StreamingResponseBody result = pdfTextExtractService.processRequest(request);
+        StreamingResponseBody result = (StreamingResponseBody) pdfTextExtractService.processRequest(request);
 
         String expectedFileName = "basic-text-cleaned.txt";
         String expectedContentResourcesPath = "contentExtraction/text/expected/expectedFullContent.txt";

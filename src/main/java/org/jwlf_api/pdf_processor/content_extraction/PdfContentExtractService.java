@@ -3,22 +3,20 @@ package org.jwlf_api.pdf_processor.content_extraction;
 import lombok.extern.slf4j.Slf4j;
 import org.jwlf_api.pdf_processor.common.PdfRequest;
 import org.jwlf_api.pdf_processor.common.PdfService;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 @Slf4j
-public abstract class PdfContentExtractService extends PdfService {
-    
-    protected abstract StreamingResponseBody extract(PdfRequest request) throws PdfContentExtractException;
+public abstract class PdfContentExtractService<T> extends PdfService<T> {
+
+    protected abstract T extract(PdfRequest request) throws PdfContentExtractException;
 
     @Override
-    public StreamingResponseBody processRequest(PdfRequest request) throws PdfContentExtractException {
+    public T processRequest(PdfRequest request) throws PdfContentExtractException {
         PdfContentExtractRequest pdfContentExtractRequest = (PdfContentExtractRequest) request;
         log.debug("Content extract request received with type {}.", pdfContentExtractRequest.getContentType());
         validateRequest(request);
 
         long startTime = System.nanoTime();
-        StreamingResponseBody result = extract(request);
+        T result = extract(request);
         long endTime = System.nanoTime();
         long diffMs = (endTime - startTime) / 1000000;
         log.debug("Operation completed in {} ms", diffMs);

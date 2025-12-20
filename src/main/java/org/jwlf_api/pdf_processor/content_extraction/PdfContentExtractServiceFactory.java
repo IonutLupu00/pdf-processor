@@ -1,29 +1,36 @@
 package org.jwlf_api.pdf_processor.content_extraction;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.Metadata;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.util.Map;
 
 @Component
 public class PdfContentExtractServiceFactory {
 
-    private final PdfContentExtractService imageExtractService;
-    private final PdfContentExtractService textExtractService;
+    private final PdfContentExtractService<StreamingResponseBody> pdfImageExtractService;
+    private final PdfContentExtractService<StreamingResponseBody> pdfTextExtractService;
+    private final PdfContentExtractService<Map<String, Metadata>> pdfMetadataExtractService; ;
 
-    public PdfContentExtractServiceFactory(@Qualifier("pdfImageExtractService") PdfContentExtractService imageExtractService,
-                                           @Qualifier("pdfTextExtractService") PdfContentExtractService textExtractService) {
-        this.imageExtractService = imageExtractService;
-        this.textExtractService = textExtractService;
+    public PdfContentExtractServiceFactory(PdfContentExtractService<StreamingResponseBody> pdfImageExtractService,
+                                           PdfContentExtractService<StreamingResponseBody> pdfTextExtractService,
+                                           PdfContentExtractService<Map<String, Metadata>> pdfMetadataExtractService) {
+        this.pdfImageExtractService = pdfImageExtractService;
+        this.pdfTextExtractService = pdfTextExtractService;
+        this.pdfMetadataExtractService = pdfMetadataExtractService;
     }
 
-    public PdfContentExtractService resolveService(PdfContentExtractRequest request) throws PdfContentExtractException {
+    public PdfContentExtractService<?> resolveService(PdfContentExtractRequest request) throws PdfContentExtractException {
         PdfContentExtractType contentType = request.getContentType();
         if (contentType == null) {
             throw new PdfContentExtractException("Missing content type.");
         }
         return switch (contentType) {
-            case TEXT -> textExtractService;
-            case IMAGE -> imageExtractService;
-            case OCR, ANNOTATION, METADATA, TABLE, FORM -> null;
+            case TEXT -> pdfTextExtractService;
+            case IMAGE -> pdfImageExtractService;
+            case METADATA -> pdfMetadataExtractService;
+            case OCR, ANNOTATION, TABLE, FORM -> null;
         };
     }
 

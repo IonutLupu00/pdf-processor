@@ -23,8 +23,8 @@ class ImageExtractServiceTest {
     @Test
     void testExtractImage_success() throws IOException, PdfContentExtractException {
         MultipartFile pdfWithImages = generateMockPdfFilesWithImages(1, 1).getFirst();
-        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithImages, "", PdfContentExtractType.IMAGE);
-        StreamingResponseBody result = imageExtractService.processRequest(request);
+        PdfContentExtractRequest request = new PdfContentExtractRequest(pdfWithImages, PdfContentExtractType.IMAGE);
+        StreamingResponseBody result = (StreamingResponseBody) imageExtractService.processRequest(request);
         String expectedFileName = "page_1_image_1.png";
         FileExpectation expectation = getExpectation(expectedFileName, 100, 100);
         Map<String, FileExpectation> expectedFiles = Map.of(expectedFileName, expectation);
