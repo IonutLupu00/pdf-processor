@@ -27,7 +27,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class PdfImageExtractService extends PdfContentExtractService {
+public class PdfImageExtractService extends PdfContentExtractService<StreamingResponseBody> {
 
     @Override
     protected StreamingResponseBody extract(PdfRequest request) throws PdfContentExtractException {

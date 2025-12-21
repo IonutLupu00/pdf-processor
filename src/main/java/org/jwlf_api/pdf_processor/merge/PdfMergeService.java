@@ -16,7 +16,7 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 @Service
 @NoArgsConstructor
 @Slf4j
-public class PdfMergeService extends PdfService {
+public class PdfMergeService extends PdfService<StreamingResponseBody> {
 
     @Override
     public StreamingResponseBody processRequest(PdfRequest request) throws PdfMergeException, InterruptedException {

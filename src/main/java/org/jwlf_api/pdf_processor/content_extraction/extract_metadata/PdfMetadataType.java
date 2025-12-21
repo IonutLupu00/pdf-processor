@@ -19,4 +19,13 @@ public enum PdfMetadataType {
     PdfMetadataType(String value) {
         this.value = value;
     }
+
+    public static PdfMetadataType fromValue(String value) {
+        for (PdfMetadataType type : PdfMetadataType.values()) {
+            if (type.value.equals(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown PdfMetadataType value: " + value);
+    }
 }

@@ -29,7 +29,7 @@ public class PdfMetadataExtractService extends PdfContentExtractService<Map<Stri
         try (RandomAccessRead rar = new RandomAccessReadBuffer(metadataExtractRequest.getFile().getInputStream());
              PDDocument document = Loader.loadPDF(rar)) {
             Set<PdfMetadataType> pdfMetadataTypes = metadataExtractRequest.getMetadataTypes().stream()
-                    .map(PdfMetadataType::valueOf).collect(Collectors.toSet());
+                    .map(PdfMetadataType::fromValue).collect(Collectors.toSet());
             return extractMetadata(pdfMetadataTypes, document);
         } catch (IOException e) {
             throw new PdfContentExtractException(e.getMessage(), e);

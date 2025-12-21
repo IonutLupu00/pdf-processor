@@ -1,18 +1,21 @@
 package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractRequest;
+import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 public class PdfMetadataExtractRequest extends PdfContentExtractRequest {
+
     private Set<String> metadataTypes;
+
+    public PdfMetadataExtractRequest(MultipartFile file,  PdfContentExtractType contentType, Set<String> metadataTypes) {
+        super(file, contentType);
+        this.metadataTypes = metadataTypes;
+    }
 }

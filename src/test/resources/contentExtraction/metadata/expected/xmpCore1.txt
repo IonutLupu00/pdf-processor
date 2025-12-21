@@ -1,0 +1,1 @@
+{"creatorTool":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","createDate":"2025-10-16T12:46:44Z","modifyDate":"2025-10-16T12:46:44Z","metadataDate":"2025-10-16T12:46:44Z","identifiers":null,"label":null,"rating":null}

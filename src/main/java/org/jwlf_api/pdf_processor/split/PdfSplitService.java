@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Slf4j
-public abstract class PdfSplitService extends PdfService {
+public abstract class PdfSplitService extends PdfService<StreamingResponseBody> {
 
     protected abstract StreamingResponseBody splitPdf(SplitRequest request) throws PdfException;
 

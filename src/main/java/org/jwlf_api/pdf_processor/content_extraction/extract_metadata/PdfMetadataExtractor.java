@@ -2,27 +2,28 @@ package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.DocumentInformation;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpData;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PdfMetadataExtractor {
 
-    private PdfMetadataExtractor() {
-    }
-
-    public static PdfMetadata extractMetadata(PdfMetadataType pdfMetadataType, PDDocument document) {
+    public PdfMetadata extractMetadata(PdfMetadataType pdfMetadataType, PDDocument document) {
         switch (pdfMetadataType){
             case DOCUMENT_INFO -> {
-                return extractDocumentInformation(document);
+                PDDocumentInformation rawDocumentInformation = document.getDocumentInformation();
+                return new PdfDocumentInformation(rawDocumentInformation);
+            }
+            case XMP_CORE -> {
+                return PdfXmpData.of(document);
             }
             //TODO: add missing
-            default -> throw new IllegalArgumentException("Invalid metadata.");
+            default -> {
+                return null;
+            }
         }
-    }
-
-    private static DocumentInformation extractDocumentInformation(PDDocument document) {
-        PDDocumentInformation rawDocumentInformation = document.getDocumentInformation();
-        return new DocumentInformation(rawDocumentInformation);
     }
 
 }
