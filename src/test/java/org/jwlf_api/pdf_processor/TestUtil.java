@@ -41,4 +41,14 @@ public class TestUtil {
             throw new RuntimeException("Exception occurred while trying to read pdf file from test resources.", e);
         }
     }
+
+    public static <T> T runWithTestPDDocument(MultipartFile file, Function<PDDocument, T> function) {
+        try (var documentInputStream = file.getInputStream();
+             var rar = new RandomAccessReadBuffer(documentInputStream);
+             var document = Loader.loadPDF(rar)) {
+            return function.apply(document);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to read pdf file from test resources.", e);
+        }
+    }
 }

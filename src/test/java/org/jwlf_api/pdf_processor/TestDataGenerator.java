@@ -5,17 +5,25 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.AdobePDFSchema;
+import org.apache.xmpbox.schema.DublinCoreSchema;
+import org.apache.xmpbox.schema.XMPBasicSchema;
+import org.apache.xmpbox.xml.XmpSerializer;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -23,8 +31,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static javax.imageio.ImageIO.write;
 
@@ -32,6 +43,72 @@ public class TestDataGenerator {
 
     private TestDataGenerator() {
     }
+
+    public static List<MultipartFile> generateMockPdfFilesWithMetadata(int count) {
+        List<MultipartFile> files = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
+
+            try (PDDocument doc = new PDDocument()) {
+                doc.addPage(new PDPage());
+
+                PDDocumentInformation info = new PDDocumentInformation();
+                info.setTitle("Title-" + UUID.randomUUID());
+                info.setAuthor("Author-" + i);
+                info.setSubject("Subject-" + i);
+                info.setKeywords("key" + i);
+                info.setCreator("MockGenerator");
+                info.setProducer("PDFBox");
+                info.setCreationDate(Calendar.getInstance());
+                info.setModificationDate(Calendar.getInstance());
+
+                doc.setDocumentInformation(info);
+
+                XMPMetadata xmp = XMPMetadata.createXMPMetadata();
+
+                DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
+                dc.setTitle("xmp-title-" + UUID.randomUUID());
+                dc.addCreator("xmp-author-" + i);
+                dc.setDescription("xmp-description-" + i);
+                dc.addSubject("xmp-subject-" + i);
+
+                XMPBasicSchema xmpBasic = xmp.createAndAddXMPBasicSchema();
+                xmpBasic.setCreatorTool("MockGenerator");
+                xmpBasic.setCreateDate(GregorianCalendar.getInstance());
+                xmpBasic.setModifyDate(GregorianCalendar.getInstance());
+                xmpBasic.setMetadataDate(GregorianCalendar.getInstance());
+
+                AdobePDFSchema pdfSchema = xmp.createAndAddAdobePDFSchema();
+                pdfSchema.setProducer("PDFBox");
+                pdfSchema.setKeywords(info.getKeywords());
+
+                PDMetadata metadata = new PDMetadata(doc);
+                ByteArrayOutputStream xmpOutput = new ByteArrayOutputStream();
+                new XmpSerializer().serialize(xmp, xmpOutput, true);
+                metadata.importXMPMetadata(xmpOutput.toByteArray());
+                doc.getDocumentCatalog().setMetadata(metadata);
+
+                doc.save(pdfOutput);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (TransformerException e) {
+                throw new RuntimeException(e);
+            }
+
+            byte[] content = pdfOutput.toByteArray();
+            MultipartFile file = new MockMultipartFile(
+                    "file",
+                    "test-" + i + ".pdf",
+                    "application/pdf",
+                    content
+            );
+            files.add(file);
+        }
+
+        return files;
+    }
+
 
     public static List<MultipartFile> generateMockPdfFiles(int count) {
         List<MultipartFile> files = new ArrayList<>();
