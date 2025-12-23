@@ -28,7 +28,6 @@ class PdfPdfMetadataExtractorTest {
 
         expected.setCreationDate(result.getCreationDate());
         expected.setModificationDate(result.getModificationDate());
-        expected.setCustomMetadata(result.getCustomMetadata());
 
         assertEquals(expected.toJson(), result.toJson());
     }

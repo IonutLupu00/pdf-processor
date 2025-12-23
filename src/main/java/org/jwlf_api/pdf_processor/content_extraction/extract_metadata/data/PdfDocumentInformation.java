@@ -7,7 +7,9 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -45,11 +47,13 @@ public class PdfDocumentInformation extends PdfMetadata {
         if (pdDocumentInformation.getModificationDate() != null) {
             this.modificationDate = pdDocumentInformation.getModificationDate().toInstant();
         }
+
+        Set<String> coveredKeys = Set.of("CreationDate", "Keywords", "Creator", "Producer", "Trapped", "Title", "ModDate", "Subject", "Author");
         
         this.customMetadata = new HashMap<>();
         for (String key : pdDocumentInformation.getMetadataKeys()) {
             String value = pdDocumentInformation.getCustomMetadataValue(key);
-            if (value != null) {
+            if (value != null && !coveredKeys.contains(key)) {
                 this.customMetadata.put(key, value);
             }
         }
