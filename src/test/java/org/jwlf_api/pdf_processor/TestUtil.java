@@ -48,7 +48,7 @@ public class TestUtil {
              var document = Loader.loadPDF(rar)) {
             return function.apply(document);
         } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while trying to read pdf file from test resources.", e);
+            throw new RuntimeException("Exception occurred while trying to get input stream of file..", e);
         }
     }
 }

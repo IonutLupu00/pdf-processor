@@ -20,6 +20,7 @@ import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
 import org.apache.xmpbox.xml.XmpSerializer;
+import org.jspecify.annotations.NonNull;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,16 +54,7 @@ public class TestDataGenerator {
             try (PDDocument doc = new PDDocument()) {
                 doc.addPage(new PDPage());
 
-                PDDocumentInformation info = new PDDocumentInformation();
-                info.setTitle("Title-" + UUID.randomUUID());
-                info.setAuthor("Author-" + i);
-                info.setSubject("Subject-" + i);
-                info.setKeywords("key" + i);
-                info.setCreator("MockGenerator");
-                info.setProducer("PDFBox");
-                info.setCreationDate(Calendar.getInstance());
-                info.setModificationDate(Calendar.getInstance());
-
+                PDDocumentInformation info = getPdDocumentInformation(i);
                 doc.setDocumentInformation(info);
 
                 XMPMetadata xmp = XMPMetadata.createXMPMetadata();
@@ -73,11 +65,7 @@ public class TestDataGenerator {
                 dc.setDescription("xmp-description-" + i);
                 dc.addSubject("xmp-subject-" + i);
 
-                XMPBasicSchema xmpBasic = xmp.createAndAddXMPBasicSchema();
-                xmpBasic.setCreatorTool("MockGenerator");
-                xmpBasic.setCreateDate(GregorianCalendar.getInstance());
-                xmpBasic.setModifyDate(GregorianCalendar.getInstance());
-                xmpBasic.setMetadataDate(GregorianCalendar.getInstance());
+                setXmpBasicData(xmp, i);
 
                 AdobePDFSchema pdfSchema = xmp.createAndAddAdobePDFSchema();
                 pdfSchema.setProducer("PDFBox");
@@ -109,6 +97,34 @@ public class TestDataGenerator {
         return files;
     }
 
+    private static @NonNull PDDocumentInformation getPdDocumentInformation(int index) {
+        PDDocumentInformation info = new PDDocumentInformation();
+        info.setTitle("Title-" + index);
+        info.setAuthor("Author-" + index);
+        info.setSubject("Subject-" + index);
+        info.setKeywords("key" + index);
+        info.setCreator("MockGenerator");
+        info.setProducer("PDFBox");
+        info.setCreationDate(Calendar.getInstance());
+        info.setModificationDate(Calendar.getInstance());
+        info.setTrapped("False");
+        info.setCustomMetadataValue("customField-" + index, "customValue-" + index);
+        return info;
+    }
+
+    private static void setXmpBasicData(XMPMetadata xmp, int i) {
+        XMPBasicSchema xmpBasic = xmp.createAndAddXMPBasicSchema();
+        xmpBasic.setCreatorTool("MockGenerator");
+        xmpBasic.setCreateDate(GregorianCalendar.getInstance());
+        xmpBasic.setModifyDate(GregorianCalendar.getInstance());
+        xmpBasic.setMetadataDate(GregorianCalendar.getInstance());
+        xmpBasic.setLabel("xmp-label-" + i);
+        xmpBasic.setBaseURL("xmp-baseurl-" + i);
+        xmpBasic.setRating(i);
+        xmpBasic.setNickname("xmp-nickname-" + i);
+        xmpBasic.addAdvisory("xmp-advisory-" + i);
+        xmpBasic.addIdentifier("xmp-identifier-" + i);
+    }
 
     public static List<MultipartFile> generateMockPdfFiles(int count) {
         List<MultipartFile> files = new ArrayList<>();

@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -18,8 +20,8 @@ public class PdfDocumentInformation extends PdfMetadata {
     private String producer;
     private Instant creationDate;
     private Instant modificationDate;
-    private String trapped;
-
+    private Trapped trapped;
+    private Map<String, String> customMetadata;
     public PdfDocumentInformation() {
     }
 
@@ -34,8 +36,22 @@ public class PdfDocumentInformation extends PdfMetadata {
         this.keywords = pdDocumentInformation.getKeywords();
         this.creator = pdDocumentInformation.getCreator();
         this.producer = pdDocumentInformation.getProducer();
-        this.creationDate = pdDocumentInformation.getCreationDate().toInstant();
-        this.modificationDate = pdDocumentInformation.getModificationDate().toInstant();
-        this.trapped = pdDocumentInformation.getTrapped();
+        this.trapped = Trapped.fromValue(pdDocumentInformation.getTrapped());
+        
+        if (pdDocumentInformation.getCreationDate() != null) {
+            this.creationDate = pdDocumentInformation.getCreationDate().toInstant();
+        }
+
+        if (pdDocumentInformation.getModificationDate() != null) {
+            this.modificationDate = pdDocumentInformation.getModificationDate().toInstant();
+        }
+        
+        this.customMetadata = new HashMap<>();
+        for (String key : pdDocumentInformation.getMetadataKeys()) {
+            String value = pdDocumentInformation.getCustomMetadataValue(key);
+            if (value != null) {
+                this.customMetadata.put(key, value);
+            }
+        }
     }
 }

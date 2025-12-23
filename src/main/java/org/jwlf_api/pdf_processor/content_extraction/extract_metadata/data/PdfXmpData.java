@@ -22,9 +22,11 @@ public class PdfXmpData extends PdfMetadata {
     private Instant modifyDate;
     private Instant metadataDate;
     private List<String> identifiers;
+    private List<String> advisory;
     private String label;
     private Integer rating;
-
+    private String nickname;
+    private String baseURL;
     public PdfXmpData() {
     }
 
@@ -39,26 +41,29 @@ public class PdfXmpData extends PdfMetadata {
             DomXmpParser parser = new DomXmpParser();
             XMPMetadata xmp = parser.parse(is);
 
-            XMPBasicSchema schema = xmp.getXMPBasicSchema();
-            if (schema == null) {
+            XMPBasicSchema xmpBasicSchema = xmp.getXMPBasicSchema();
+            if (xmpBasicSchema == null) {
                 return null;
             }
-            PdfXmpData data = new PdfXmpData();
-            data.setCreatorTool(schema.getCreatorTool());
-            if (schema.getCreateDate() != null) {
-                data.setCreateDate(schema.getCreateDate().toInstant());
+            PdfXmpData resultData = new PdfXmpData();
+            resultData.setCreatorTool(xmpBasicSchema.getCreatorTool());
+            if (xmpBasicSchema.getCreateDate() != null) {
+                resultData.setCreateDate(xmpBasicSchema.getCreateDate().toInstant());
             }
-            if (schema.getModifyDate() != null) {
-                data.setModifyDate(schema.getModifyDate().toInstant());
+            if (xmpBasicSchema.getModifyDate() != null) {
+                resultData.setModifyDate(xmpBasicSchema.getModifyDate().toInstant());
             }
-            if (schema.getMetadataDate() != null) {
-                data.setMetadataDate(schema.getMetadataDate().toInstant());
+            if (xmpBasicSchema.getMetadataDate() != null) {
+                resultData.setMetadataDate(xmpBasicSchema.getMetadataDate().toInstant());
             }
-            data.setIdentifiers(schema.getIdentifiers());
-            data.setLabel(schema.getLabel());
-            data.setRating(schema.getRating());
-
-            return data;
+            resultData.setIdentifiers(xmpBasicSchema.getIdentifiers());
+            resultData.setLabel(xmpBasicSchema.getLabel());
+            resultData.setRating(xmpBasicSchema.getRating());
+            resultData.setNickname(xmpBasicSchema.getNickname());
+            resultData.setBaseURL(xmpBasicSchema.getBaseURL());
+            resultData.setAdvisory(xmpBasicSchema.getAdvisory());
+            
+            return resultData;
         } catch (Exception e) {
             throw new RuntimeException("Failed to read XMP Core metadata", e);
         }
