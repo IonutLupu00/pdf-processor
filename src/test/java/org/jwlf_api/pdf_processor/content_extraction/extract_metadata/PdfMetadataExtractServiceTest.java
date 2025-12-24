@@ -20,7 +20,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.jwlf_api.pdf_processor.TestDataGenerator.generateMockPdfFiles;
 import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.DOCUMENT_INFO;
-import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.XMP_CORE;
+import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.XMP;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +38,7 @@ class PdfMetadataExtractServiceTest {
         MultipartFile file = generateMockPdfFiles(1).getFirst();
         Set<String> metadataTypes = Set.of(
                 DOCUMENT_INFO.getValue(),
-                XMP_CORE.getValue()
+                XMP.getValue()
         );
         PdfMetadataExtractRequest pdfMetadataExtractRequest = new PdfMetadataExtractRequest(file, PdfContentExtractType.METADATA, metadataTypes);
 
@@ -55,7 +55,7 @@ class PdfMetadataExtractServiceTest {
 
                     return switch (type) {
                         case DOCUMENT_INFO -> new PdfDocumentInformation(null);
-                        case XMP_CORE -> PdfXmpMetadata.of(null);
+                        case XMP -> PdfXmpMetadata.of(null);
                         default -> null;
                     };
                 });

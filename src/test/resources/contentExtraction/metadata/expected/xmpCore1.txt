@@ -1,1 +1,0 @@
-{"creatorTool":"MockGenerator","createDate":"2025-12-23T19:33:29Z","modifyDate":"2025-12-23T19:33:29Z","metadataDate":"2025-12-23T19:33:29Z","identifiers":["xmp-identifier-0"],"advisory":["xmp-advisory-0"],"label":"xmp-label-0","rating":0,"nickname":"xmp-nickname-0","baseURL":"xmp-baseurl-0"}

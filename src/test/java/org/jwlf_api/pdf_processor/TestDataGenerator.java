@@ -60,7 +60,7 @@ public class TestDataGenerator {
                 XMPMetadata xmp = XMPMetadata.createXMPMetadata();
 
                 DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
-                dc.setTitle("xmp-title-" + UUID.randomUUID());
+                dc.setTitle("xmp-title-" + i);
                 dc.addCreator("xmp-author-" + i);
                 dc.setDescription("xmp-description-" + i);
                 dc.addSubject("xmp-subject-" + i);

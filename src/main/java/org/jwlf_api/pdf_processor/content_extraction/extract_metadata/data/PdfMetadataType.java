@@ -4,14 +4,12 @@ import lombok.Getter;
 
 public enum PdfMetadataType {
     DOCUMENT_INFO("document-info"),
-    XMP_CORE("xmp-core"),
-    XMP_COMPLIANCE("xmp-compliance"),
+    XMP("xmp"),
     EMBEDDED_FILES("embedded-files"),
     SECURITY("security"),
     SIGNATURES("signatures"),
     TECHNICAL("technical"),
-    PAGES("pages"),
-    RAW_XMP("raw-xmp");
+    PAGES("pages");
 
     @Getter
     private final String value;

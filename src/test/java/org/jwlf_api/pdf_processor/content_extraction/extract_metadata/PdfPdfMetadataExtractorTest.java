@@ -10,12 +10,12 @@ import static org.jwlf_api.pdf_processor.TestDataGenerator.generateMockPdfFilesW
 import static org.jwlf_api.pdf_processor.TestUtil.getTextContentFromResources;
 import static org.jwlf_api.pdf_processor.TestUtil.runWithTestPDDocument;
 import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.DOCUMENT_INFO;
-import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.XMP_CORE;
+import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.XMP;
 
 class PdfPdfMetadataExtractorTest {
 
     private static final String EXPECTED_DOCUMENT_INFO_1 = "contentExtraction/metadata/expected/documentInfo1.txt";
-    private static final String EXPECTED_XMP_CORE_1 = "contentExtraction/metadata/expected/xmpCore1.txt";
+    private static final String EXPECTED_XMP_CORE_1 = "contentExtraction/metadata/expected/xmp1.txt";
 
     private final PdfMetadataExtractor pdfMetadataExtractor = new PdfMetadataExtractor();
 
@@ -33,15 +33,16 @@ class PdfPdfMetadataExtractorTest {
     }
 
     @Test
-    void testExtractMetadata_xmpCore() {
+    void testExtractMetadata_xmp() {
         MultipartFile file = generateMockPdfFilesWithMetadata(1).getFirst();
-        PdfXmpMetadata result = runWithTestPDDocument(file, document -> (PdfXmpMetadata) pdfMetadataExtractor.extractMetadata(XMP_CORE, document));
+        PdfXmpMetadata result = runWithTestPDDocument(file, document -> (PdfXmpMetadata) pdfMetadataExtractor.extractMetadata(XMP, document));
         String expectedString = getTextContentFromResources(EXPECTED_XMP_CORE_1);
         PdfXmpMetadata expected = PdfXmpMetadata.fromJson(expectedString, PdfXmpMetadata.class);
 
-        expected.setCreateDate(result.getCreateDate());
-        expected.setMetadataDate(result.getMetadataDate());
-        expected.setModifyDate(result.getMetadataDate());
+        expected.xmpBasic.setMetadataDate(result.getXmpBasic().getMetadataDate());
+        expected.xmpBasic.setMetadataDate(result.getXmpBasic().getMetadataDate());
+        expected.xmpBasic.setModifyDate(result.getXmpBasic().getModifyDate());
+        expected.xmpBasic.setCreateDate(result.getXmpBasic().getCreateDate());
 
         assertEquals(expected.toJson(), result.toJson());
     }

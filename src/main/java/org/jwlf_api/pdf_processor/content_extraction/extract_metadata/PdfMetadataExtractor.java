@@ -17,7 +17,7 @@ public class PdfMetadataExtractor {
                 PDDocumentInformation rawDocumentInformation = document.getDocumentInformation();
                 return new PdfDocumentInformation(rawDocumentInformation);
             }
-            case XMP_CORE -> {
+            case XMP -> {
                 return PdfXmpMetadata.of(document);
             }
             //TODO: add missing
