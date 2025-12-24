@@ -2,15 +2,15 @@ package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 
 import org.junit.jupiter.api.Test;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpData;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpCore;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.jwlf_api.pdf_processor.TestDataGenerator.generateMockPdfFilesWithMetadata;
 import static org.jwlf_api.pdf_processor.TestUtil.getTextContentFromResources;
 import static org.jwlf_api.pdf_processor.TestUtil.runWithTestPDDocument;
-import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.PdfMetadataType.DOCUMENT_INFO;
-import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.PdfMetadataType.XMP_CORE;
+import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.DOCUMENT_INFO;
+import static org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType.XMP_CORE;
 
 class PdfPdfMetadataExtractorTest {
 
@@ -35,9 +35,9 @@ class PdfPdfMetadataExtractorTest {
     @Test
     void testExtractMetadata_xmpCore() {
         MultipartFile file = generateMockPdfFilesWithMetadata(1).getFirst();
-        PdfXmpData result = runWithTestPDDocument(file, document -> (PdfXmpData) pdfMetadataExtractor.extractMetadata(XMP_CORE, document));
+        PdfXmpCore result = runWithTestPDDocument(file, document -> (PdfXmpCore) pdfMetadataExtractor.extractMetadata(XMP_CORE, document));
         String expectedString = getTextContentFromResources(EXPECTED_XMP_CORE_1);
-        PdfXmpData expected = PdfXmpData.fromJson(expectedString, PdfXmpData.class);
+        PdfXmpCore expected = PdfXmpCore.fromJson(expectedString, PdfXmpCore.class);
 
         expected.setCreateDate(result.getCreateDate());
         expected.setMetadataDate(result.getMetadataDate());

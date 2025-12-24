@@ -13,7 +13,7 @@
         <apache.pdf.version>3.0.6</apache.pdf.version>
         <lombok.version>1.18.38</lombok.version>
         <mockito.version>5.17.0</mockito.version>
-        <spring.version>6.2.10</spring.version>
+        <spring.version>7.0.2</spring.version>
         <mockito-inline.version>4.6.1</mockito-inline.version>
         <junit.version>5.12.2</junit.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>

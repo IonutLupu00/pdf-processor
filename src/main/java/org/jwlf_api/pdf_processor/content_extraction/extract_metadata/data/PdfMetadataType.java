@@ -1,4 +1,4 @@
-package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
+package org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data;
 
 import lombok.Getter;
 

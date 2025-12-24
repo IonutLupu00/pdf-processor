@@ -15,7 +15,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PdfXmpData extends PdfMetadata {
+public class PdfXmpCore extends PdfMetadata {
 
     private String creatorTool;
     private Instant createDate;
@@ -27,14 +27,19 @@ public class PdfXmpData extends PdfMetadata {
     private Integer rating;
     private String nickname;
     private String baseURL;
-    public PdfXmpData() {
+    public PdfXmpCore() {
+        //empty constructor
     }
 
-    public static PdfXmpData of(PDDocument document) {
+    public static PdfXmpCore of(PDDocument document) {
         try {
+            if(document == null) {
+                return new PdfXmpCore();
+            }
+            
             PDMetadata metadata = document.getDocumentCatalog().getMetadata();
             if (metadata == null) {
-                return null;
+                return new PdfXmpCore();
             }
             InputStream is = metadata.createInputStream();
 
@@ -43,9 +48,9 @@ public class PdfXmpData extends PdfMetadata {
 
             XMPBasicSchema xmpBasicSchema = xmp.getXMPBasicSchema();
             if (xmpBasicSchema == null) {
-                return null;
+                return new PdfXmpCore();
             }
-            PdfXmpData resultData = new PdfXmpData();
+            PdfXmpCore resultData = new PdfXmpCore();
             resultData.setCreatorTool(xmpBasicSchema.getCreatorTool());
             if (xmpBasicSchema.getCreateDate() != null) {
                 resultData.setCreateDate(xmpBasicSchema.getCreateDate().toInstant());

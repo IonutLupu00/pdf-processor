@@ -23,8 +23,6 @@ import static org.jwlf_api.pdf_processor.split.PdfSplitter.splitByPageIndexesLef
 @Slf4j
 @Service
 public class PdfSplitServicePagesPerFile extends PdfSplitService {
-
-
     @Override
     protected StreamingResponseBody splitPdf(SplitRequest request) throws PdfException {
         try (RandomAccessRead rar = new RandomAccessReadBuffer(request.getFile().getInputStream()); PDDocument document = Loader.loadPDF(rar)) {

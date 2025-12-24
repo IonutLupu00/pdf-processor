@@ -8,6 +8,7 @@ import org.jwlf_api.pdf_processor.common.PdfRequest;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractException;
 import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractService;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
