@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ public class PdfDocumentInformation extends PdfMetadata {
     private Instant modificationDate;
     private Trapped trapped;
     private Map<String, String> customMetadata;
+
     public PdfDocumentInformation() {
     }
 

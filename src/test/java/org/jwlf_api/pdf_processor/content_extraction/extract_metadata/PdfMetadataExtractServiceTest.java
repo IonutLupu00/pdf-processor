@@ -8,7 +8,7 @@ import org.jwlf_api.pdf_processor.content_extraction.PdfContentExtractType;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpCore;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpMetadata;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,7 +55,7 @@ class PdfMetadataExtractServiceTest {
 
                     return switch (type) {
                         case DOCUMENT_INFO -> new PdfDocumentInformation(null);
-                        case XMP_CORE -> PdfXmpCore.of(null);
+                        case XMP_CORE -> PdfXmpMetadata.of(null);
                         default -> null;
                     };
                 });

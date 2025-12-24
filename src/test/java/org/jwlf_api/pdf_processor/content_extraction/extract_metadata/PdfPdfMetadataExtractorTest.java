@@ -2,7 +2,7 @@ package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 
 import org.junit.jupiter.api.Test;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpCore;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpMetadata;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,9 +35,9 @@ class PdfPdfMetadataExtractorTest {
     @Test
     void testExtractMetadata_xmpCore() {
         MultipartFile file = generateMockPdfFilesWithMetadata(1).getFirst();
-        PdfXmpCore result = runWithTestPDDocument(file, document -> (PdfXmpCore) pdfMetadataExtractor.extractMetadata(XMP_CORE, document));
+        PdfXmpMetadata result = runWithTestPDDocument(file, document -> (PdfXmpMetadata) pdfMetadataExtractor.extractMetadata(XMP_CORE, document));
         String expectedString = getTextContentFromResources(EXPECTED_XMP_CORE_1);
-        PdfXmpCore expected = PdfXmpCore.fromJson(expectedString, PdfXmpCore.class);
+        PdfXmpMetadata expected = PdfXmpMetadata.fromJson(expectedString, PdfXmpMetadata.class);
 
         expected.setCreateDate(result.getCreateDate());
         expected.setMetadataDate(result.getMetadataDate());
