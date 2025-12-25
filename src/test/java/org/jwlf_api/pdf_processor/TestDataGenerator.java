@@ -9,8 +9,16 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.common.PDStream;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationFileAttachment;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -36,7 +44,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static javax.imageio.ImageIO.write;
 
@@ -51,11 +58,11 @@ public class TestDataGenerator {
         for (int i = 0; i < count; i++) {
             ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
 
-            try (PDDocument doc = new PDDocument()) {
-                doc.addPage(new PDPage());
+            try (PDDocument document = new PDDocument()) {
+                document.addPage(new PDPage());
 
                 PDDocumentInformation info = getPdDocumentInformation(i);
-                doc.setDocumentInformation(info);
+                document.setDocumentInformation(info);
 
                 XMPMetadata xmp = XMPMetadata.createXMPMetadata();
 
@@ -65,22 +72,25 @@ public class TestDataGenerator {
                 dc.setDescription("xmp-description-" + i);
                 dc.addSubject("xmp-subject-" + i);
 
-                setXmpBasicData(xmp, i);
+                addEmbeddedFileTestData(document);
+                addXmpBasicTestData(xmp, i);
+                addPagesTestData(document);
+                addSecurityTestData(document);
+                addSignatureTestData(document);
+
 
                 AdobePDFSchema pdfSchema = xmp.createAndAddAdobePDFSchema();
                 pdfSchema.setProducer("PDFBox");
                 pdfSchema.setKeywords(info.getKeywords());
 
-                PDMetadata metadata = new PDMetadata(doc);
+                PDMetadata metadata = new PDMetadata(document);
                 ByteArrayOutputStream xmpOutput = new ByteArrayOutputStream();
                 new XmpSerializer().serialize(xmp, xmpOutput, true);
                 metadata.importXMPMetadata(xmpOutput.toByteArray());
-                doc.getDocumentCatalog().setMetadata(metadata);
+                document.getDocumentCatalog().setMetadata(metadata);
 
-                doc.save(pdfOutput);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (TransformerException e) {
+                document.save(pdfOutput);
+            } catch (IOException | TransformerException e) {
                 throw new RuntimeException(e);
             }
 
@@ -112,7 +122,7 @@ public class TestDataGenerator {
         return info;
     }
 
-    private static void setXmpBasicData(XMPMetadata xmp, int i) {
+    private static void addXmpBasicTestData(XMPMetadata xmp, int i) {
         XMPBasicSchema xmpBasic = xmp.createAndAddXMPBasicSchema();
         xmpBasic.setCreatorTool("MockGenerator");
         xmpBasic.setCreateDate(GregorianCalendar.getInstance());
@@ -124,6 +134,66 @@ public class TestDataGenerator {
         xmpBasic.setNickname("xmp-nickname-" + i);
         xmpBasic.addAdvisory("xmp-advisory-" + i);
         xmpBasic.addIdentifier("xmp-identifier-" + i);
+    }
+
+    public static void addSecurityTestData(PDDocument document) {
+        AccessPermission permissions = new AccessPermission();
+        permissions.setCanPrint(true);
+        permissions.setCanModify(true);
+        permissions.setCanExtractContent(true);
+
+        StandardProtectionPolicy policy = new StandardProtectionPolicy("owner123", "user123", permissions);
+        policy.setEncryptionKeyLength(128);
+        try {
+            document.protect(policy);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addEmbeddedFileTestData(PDDocument document) {
+
+        PDComplexFileSpecification fileSpec = new PDComplexFileSpecification();
+        fileSpec.setFile("test.txt");
+
+        byte[] dummyContent = "Hello PDFBox!".getBytes();
+
+        try {
+            PDStream stream = new PDStream(document, new ByteArrayInputStream(dummyContent));
+
+            PDEmbeddedFile embeddedFile = new PDEmbeddedFile(document, stream.createInputStream());
+            embeddedFile.setSize(dummyContent.length);
+            embeddedFile.setCreationDate(Calendar.getInstance());
+
+            fileSpec.setEmbeddedFile(embeddedFile);
+
+            PDPage firstPage = document.getPage(0);
+            PDAnnotationFileAttachment attachment = new PDAnnotationFileAttachment();
+            attachment.setFile(fileSpec);
+            firstPage.getAnnotations().add(attachment);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void addPagesTestData(PDDocument document) {
+        for (int i = 0; i < 3; i++) {
+            PDPage page = new PDPage(new PDRectangle(200 + i * 50, 300 + i * 50));
+            page.setRotation(i * 90);
+            document.addPage(page);
+        }
+    }
+
+    public static void addSignatureTestData(PDDocument document) {
+        PDSignature signature = new PDSignature();
+        signature.setName("Test Signer");
+        signature.setSignDate(Calendar.getInstance());
+        try {
+            document.addSignature(signature);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static List<MultipartFile> generateMockPdfFiles(int count) {

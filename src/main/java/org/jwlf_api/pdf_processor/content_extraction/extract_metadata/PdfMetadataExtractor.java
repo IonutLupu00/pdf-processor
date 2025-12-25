@@ -11,7 +11,7 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.EmbeddedFilesMetadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfEmbeddedFilesMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType;
@@ -58,8 +58,8 @@ public class PdfMetadataExtractor {
         }
     }
 
-    public EmbeddedFilesMetadata extractEmbeddedFilesMetadata(PDDocument document) {
-        List<EmbeddedFilesMetadata.EmbeddedFileMetadata> embeddedFileMetadataList = new ArrayList<>();
+    public PdfEmbeddedFilesMetadata extractEmbeddedFilesMetadata(PDDocument document) {
+        List<PdfEmbeddedFilesMetadata.EmbeddedFileMetadata> embeddedFileMetadataList = new ArrayList<>();
 
         PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
         if (names == null) {
@@ -88,10 +88,10 @@ public class PdfMetadataExtractor {
             if (embeddedFile == null) {
                 continue;
             }
-            embeddedFileMetadataList.add(new EmbeddedFilesMetadata.EmbeddedFileMetadata(spec.getFilename(), embeddedFile.getSubtype(), embeddedFile.getSize()));
+            embeddedFileMetadataList.add(new PdfEmbeddedFilesMetadata.EmbeddedFileMetadata(spec.getFilename(), embeddedFile.getSubtype(), embeddedFile.getSize()));
         }
 
-        return new EmbeddedFilesMetadata(embeddedFileMetadataList);
+        return new PdfEmbeddedFilesMetadata(embeddedFileMetadataList);
     }
 
 

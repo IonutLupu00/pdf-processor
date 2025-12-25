@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EmbeddedFilesMetadata extends PdfMetadata {
+public class PdfEmbeddedFilesMetadata extends PdfMetadata {
 
     private List<EmbeddedFileMetadata> embeddedFileMetadata;
 
