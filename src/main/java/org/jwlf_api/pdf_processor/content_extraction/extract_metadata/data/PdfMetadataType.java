@@ -8,7 +8,6 @@ public enum PdfMetadataType {
     EMBEDDED_FILES("embedded-files"),
     SECURITY("security"),
     SIGNATURES("signatures"),
-    TECHNICAL("technical"),
     PAGES("pages");
 
     @Getter

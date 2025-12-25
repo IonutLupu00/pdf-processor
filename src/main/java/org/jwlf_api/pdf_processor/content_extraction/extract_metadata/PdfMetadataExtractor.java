@@ -3,13 +3,21 @@ package org.jwlf_api.pdf_processor.content_extraction.extract_metadata;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.EmbeddedFileMetadata;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.EmbeddedFilesMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfDocumentInformation;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfMetadataType;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfPagesMetadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfSecurityMetadata;
+import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfSignatureMetadata;
 import org.jwlf_api.pdf_processor.content_extraction.extract_metadata.data.PdfXmpMetadata;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +39,27 @@ public class PdfMetadataExtractor {
                 return PdfXmpMetadata.of(document);
             }
             case EMBEDDED_FILES -> {
-                return extractEmbeddedFiles(document);
+                return extractEmbeddedFilesMetadata(document);
             }
 
-            default -> {
-                return null;
+            case SECURITY -> {
+                return extractSecurityMetadata(document);
             }
+
+            case SIGNATURES -> {
+                return extractSignatureMetadata(document);
+            }
+
+            case PAGES -> {
+                return extractPagesMetadata(document);
+            }
+
+            default -> throw new IllegalArgumentException("Unsupported pdf metadata type: " + pdfMetadataType);
         }
     }
 
-    public EmbeddedFileMetadata extractEmbeddedFiles(PDDocument document) {
-        List<EmbeddedFileMetadata.EmbeddedFile> embeddedFiles = new ArrayList<>();
+    public EmbeddedFilesMetadata extractEmbeddedFilesMetadata(PDDocument document) {
+        List<EmbeddedFilesMetadata.EmbeddedFileMetadata> embeddedFileMetadataList = new ArrayList<>();
 
         PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
         if (names == null) {
@@ -53,7 +71,7 @@ public class PdfMetadataExtractor {
             return null;
         }
 
-        Map<String, PDComplexFileSpecification> files = null;
+        Map<String, PDComplexFileSpecification> files;
 
         try {
             files = embeddedFilesRaw.getNames();
@@ -70,10 +88,85 @@ public class PdfMetadataExtractor {
             if (embeddedFile == null) {
                 continue;
             }
-            embeddedFiles.add(new EmbeddedFileMetadata.EmbeddedFile(spec.getFilename(), embeddedFile.getSubtype(), embeddedFile.getSize()));
+            embeddedFileMetadataList.add(new EmbeddedFilesMetadata.EmbeddedFileMetadata(spec.getFilename(), embeddedFile.getSubtype(), embeddedFile.getSize()));
         }
 
-        return new EmbeddedFileMetadata(embeddedFiles);
+        return new EmbeddedFilesMetadata(embeddedFileMetadataList);
+    }
+
+
+    public PdfSecurityMetadata extractSecurityMetadata(PDDocument document) {
+        PdfSecurityMetadata metadata = new PdfSecurityMetadata();
+
+        boolean encrypted = document.isEncrypted();
+        metadata.setEncrypted(encrypted);
+
+        if (!encrypted) {
+            return metadata;
+        }
+
+        PDEncryption encryption = document.getEncryption();
+        AccessPermission permissions = document.getCurrentAccessPermission();
+
+        metadata.setFilter(encryption.getFilter());
+
+        metadata.setCanPrint(permissions.canPrint());
+        metadata.setCanModify(permissions.canModify());
+        metadata.setCanModifyAnnotations(permissions.canModifyAnnotations());
+        metadata.setCanExtractContent(permissions.canExtractContent());
+        metadata.setCanExtractForAccessibility(permissions.canExtractForAccessibility());
+        metadata.setCanFillInForm(permissions.canFillInForm());
+        metadata.setCanAssembleDocument(permissions.canAssembleDocument());
+
+        return metadata;
+    }
+
+    public PdfSignatureMetadata extractSignatureMetadata(PDDocument document) {
+
+        PdfSignatureMetadata metadata = new PdfSignatureMetadata();
+
+        List<PDSignature> signatureList = document.getSignatureDictionaries();
+        metadata.setHasSignatures(!signatureList.isEmpty());
+        metadata.setSignatureCount(signatureList.size());
+
+        List<PdfSignatureMetadata.PdfSignatureInfo> signatures = new ArrayList<>();
+
+        for (PDSignature sig : signatureList) {
+            PdfSignatureMetadata.PdfSignatureInfo info = new PdfSignatureMetadata.PdfSignatureInfo();
+            info.setName(sig.getName());
+            info.setLocation(sig.getLocation());
+            info.setReason(sig.getReason());
+            info.setContactInfo(sig.getContactInfo());
+            info.setSigningTime(sig.getSignDate().toInstant());
+            info.setCoversWholeDocument(sig.getByteRange() != null && sig.getByteRange().length == 4);
+            signatures.add(info);
+        }
+
+        metadata.setSignatures(signatures);
+
+        return metadata;
+    }
+
+
+    public PdfPagesMetadata extractPagesMetadata(PDDocument document) {
+        PdfPagesMetadata metadata = new PdfPagesMetadata();
+        List<PdfPagesMetadata.PdfPageMetadata> pages = new ArrayList<>();
+
+        int pageNum = 0;
+        for (PDPage page : document.getPages()) {
+            pageNum++;
+            PDRectangle mediaBox = page.getMediaBox();
+            PdfPagesMetadata.PdfPageMetadata pageMetadata = new PdfPagesMetadata.PdfPageMetadata();
+            pageMetadata.setPageNumber(pageNum);
+            pageMetadata.setWidth(mediaBox.getWidth());
+            pageMetadata.setHeight(mediaBox.getHeight());
+            pageMetadata.setRotation(page.getRotation());
+            pages.add(pageMetadata);
+        }
+
+        metadata.setNumberOfPages(pages.size());
+        metadata.setPages(pages);
+        return metadata;
     }
 
 }

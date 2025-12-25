@@ -9,14 +9,14 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EmbeddedFileMetadata extends PdfMetadata {
+public class EmbeddedFilesMetadata extends PdfMetadata {
 
-    private List<EmbeddedFile> embeddedFiles;
+    private List<EmbeddedFileMetadata> embeddedFileMetadata;
 
     @Getter
     @Setter
     @AllArgsConstructor
-    public static class EmbeddedFile {
+    public static class EmbeddedFileMetadata {
         private String filename;
         private String mimeType;
         private long size;
